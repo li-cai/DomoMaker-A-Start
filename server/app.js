@@ -10,6 +10,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 // express handlebars is an express plugin for handlebars templating
 const expressHandlebars = require('express-handlebars');
+const session = require('express-session');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
@@ -35,6 +36,13 @@ app.use(cookieParser());
 app.engine('handlebars', expressHandlebars({ defaultLayout: 'main' }));
 app.set('view engine', 'handlebars');
 app.set('views', `${__dirname}/../views`);
+
+app.use(session({
+  key: 'sessionid',
+  secret: 'Domo Arigato',
+  resave: true,
+  saveUninitialized: true,
+}));
 
 router(app);
 
