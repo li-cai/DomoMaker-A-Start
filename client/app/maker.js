@@ -32,6 +32,8 @@ const renderDomo = function() {
 			<input id="domoName" type="text" name="name" placeholder="Domo Name" />
 			<label htmlFor="age">Age: </label>
 			<input id="domoAge" type="text" name="age" placeholder="Domo Age" />
+			<label htmlFor="faveFood">Favorite Food: </label>
+			<input id="domoFood" type="text" name="faveFood" placeholder="Domo's Favorite Food" />
 			<input type="hidden" name="_csrf" value={this.props.csrf} />
 			<input className="makeDomoSubmit" type="submit" value="Make Domo"/>
 		</form>
@@ -53,12 +55,14 @@ const renderDomoList = function() {
 				<img src="assets/img/domoface.jpeg" alt="domo face" className="domoFace" />
 				<h3 className="domoName">Name: {domo.name}</h3>
 				<h3 className="domoAge">Age: {domo.age}</h3>
+				<h3 className="domoFood">Favorite Food: {domo.faveFood}</h3>
 			</div>
 		);
 	});
 
 	return (
 		<div className="domoList">
+			<input id="searchField" type="text" name="searchName" placeholder="Search by Name" onChange={this.handleSearchName} />
 			{domoNodes}
 		</div>
 	);
@@ -81,6 +85,13 @@ const setup = (csrf) => {
 		},
 		componentDidMount: function() {
 			this.loadDomosFromServer();
+		},
+		handleSearchName: function(e) {
+			console.log(e.target.value);
+			sendAjax('GET', `/getDomos?q=${e.target.value}`, null, function(data) {
+				console.log(data);
+				this.setState({ data: data.domos });
+			}.bind(this));
 		},
 		render: renderDomoList
 	});

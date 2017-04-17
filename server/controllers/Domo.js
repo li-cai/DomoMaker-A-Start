@@ -1,5 +1,6 @@
 const models = require('../models');
 const Domo = models.Domo;
+const url = require('url');
 
 const makerPage = (req, res) => {
   Domo.DomoModel.findByOwner(req.session.account._id, (err, docs) => {
@@ -19,6 +20,7 @@ const makeDomo = (req, res) => {
   const domoData = {
     name: req.body.name,
     age: req.body.age,
+    faveFood: req.body.faveFood,
     owner: req.session.account._id,
   };
 
@@ -40,6 +42,18 @@ const makeDomo = (req, res) => {
 const getDomos = (request, response) => {
   const req = request;
   const res = response;
+
+  const query = url.parse(request.url, true).query;
+
+  if (query.q) {
+    return Domo.DomoModel.searchByName(query.q, (err, docs) => {
+      if (err) {
+        return res.status(400).json({ error: 'An error occurred' });
+      }
+
+      return res.json({ domos: docs });
+    });
+  }
 
   return Domo.DomoModel.findByOwner(req.session.account._id, (err, docs) => {
     if (err) {

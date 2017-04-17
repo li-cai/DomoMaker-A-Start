@@ -43,6 +43,12 @@ var renderDomo = function renderDomo() {
 			'Age: '
 		),
 		React.createElement('input', { id: 'domoAge', type: 'text', name: 'age', placeholder: 'Domo Age' }),
+		React.createElement(
+			'label',
+			{ htmlFor: 'faveFood' },
+			'Favorite Food: '
+		),
+		React.createElement('input', { id: 'domoFood', type: 'text', name: 'faveFood', placeholder: 'Domo\'s Favorite Food' }),
 		React.createElement('input', { type: 'hidden', name: '_csrf', value: this.props.csrf }),
 		React.createElement('input', { className: 'makeDomoSubmit', type: 'submit', value: 'Make Domo' })
 	);
@@ -77,6 +83,12 @@ var renderDomoList = function renderDomoList() {
 				{ className: 'domoAge' },
 				'Age: ',
 				domo.age
+			),
+			React.createElement(
+				'h3',
+				{ className: 'domoFood' },
+				'Favorite Food: ',
+				domo.faveFood
 			)
 		);
 	});
@@ -84,6 +96,7 @@ var renderDomoList = function renderDomoList() {
 	return React.createElement(
 		'div',
 		{ className: 'domoList' },
+		React.createElement('input', { id: 'searchField', type: 'text', name: 'searchName', placeholder: 'Search by Name', onChange: this.handleSearchName }),
 		domoNodes
 	);
 };
@@ -109,6 +122,13 @@ var setup = function setup(csrf) {
 		},
 		componentDidMount: function componentDidMount() {
 			this.loadDomosFromServer();
+		},
+		handleSearchName: function handleSearchName(e) {
+			console.log(e.target.value);
+			sendAjax('GET', '/getDomos?q=' + e.target.value, null, function (data) {
+				console.log(data);
+				this.setState({ data: data.domos });
+			}.bind(this));
 		},
 		render: renderDomoList
 	});

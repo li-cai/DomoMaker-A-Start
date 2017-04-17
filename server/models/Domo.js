@@ -20,6 +20,10 @@ const DomoSchema = new mongoose.Schema({
     min: 0,
     required: true,
   },
+  faveFood: {
+    type: String,
+    trim: true,
+  },
   owner: {
     type: mongoose.Schema.ObjectId,
     required: true,
@@ -40,7 +44,15 @@ DomoSchema.statics.findByOwner = (ownerId, callback) => {
   const search = {
     owner: convertId(ownerId),
   };
-  return DomoModel.find(search).select('name age').exec(callback);
+  return DomoModel.find(search).select('name age faveFood').exec(callback);
+};
+
+DomoSchema.statics.searchByName = (name, callback) => {
+  const search = {
+    name: { $regex: name, $options: 'i' },
+  };
+
+  return DomoModel.find(search).select('name age faveFood').exec(callback);
 };
 
 DomoModel = mongoose.model('Domo', DomoSchema);
